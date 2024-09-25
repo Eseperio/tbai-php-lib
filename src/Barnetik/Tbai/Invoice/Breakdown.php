@@ -33,7 +33,7 @@ class Breakdown implements TbaiXml
 
     public function addNationalNotSubjectBreakdownItem(NationalNotSubjectBreakdownItem $notSubjectBreakdowItem): self
     {
-        if (sizeof($this->nationalNotSubjectBreakdownItems) < 2) {
+        if (sizeof($this->nationalNotSubjectBreakdownItems) < 4) {
             $this->nationalNotSubjectBreakdownItems[] = $notSubjectBreakdowItem;
             return $this;
         }
@@ -63,7 +63,7 @@ class Breakdown implements TbaiXml
 
     public function addForeignServiceNotSubjectBreakdownItem(ForeignServiceNotSubjectBreakdownItem $notSubjectBreakdowItem): self
     {
-        if (sizeof($this->foreignServiceNotSubjectBreakdownItems) < 2) {
+        if (sizeof($this->foreignServiceNotSubjectBreakdownItems) < 4) {
             $this->foreignServiceNotSubjectBreakdownItems[] = $notSubjectBreakdowItem;
             return $this;
         }
@@ -93,7 +93,7 @@ class Breakdown implements TbaiXml
 
     public function addForeignDeliveryNotSubjectBreakdownItem(ForeignDeliveryNotSubjectBreakdownItem $notSubjectBreakdowItem): self
     {
-        if (sizeof($this->foreignDeliveryNotSubjectBreakdownItems) < 2) {
+        if (sizeof($this->foreignDeliveryNotSubjectBreakdownItems) < 4) {
             $this->foreignDeliveryNotSubjectBreakdownItems[] = $notSubjectBreakdowItem;
             return $this;
         }
@@ -417,7 +417,7 @@ class Breakdown implements TbaiXml
                 ],
                 'nationalNotSubjectBreakdownItems' => [
                     'type' => 'array',
-                    'maxItems' => 7,
+                    'maxItems' => 4,
                     'items' => NationalNotSubjectBreakdownItem::docJson(),
                     'description' => 'Kargapean ez daudenak - No sujetas a carga'
                 ],
@@ -435,7 +435,7 @@ class Breakdown implements TbaiXml
                 ],
                 'foreignServiceNotSubjectBreakdownItems' => [
                     'type' => 'array',
-                    'maxItems' => 7,
+                    'maxItems' => 4,
                     'items' => ForeignServiceNotSubjectBreakdownItem::docJson(),
                     'description' => 'Kargapean ez daudenak - No sujetas a carga'
                 ],
@@ -453,7 +453,7 @@ class Breakdown implements TbaiXml
                 ],
                 'foreignDeliveryNotSubjectBreakdownItems' => [
                     'type' => 'array',
-                    'maxItems' => 7,
+                    'maxItems' => 4,
                     'items' => ForeignDeliveryNotSubjectBreakdownItem::docJson(),
                     'description' => 'Kargapean ez daudenak - No sujetas a carga'
                 ]

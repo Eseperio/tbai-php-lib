@@ -25,7 +25,7 @@
                         "vatId": {
                             "type": "string",
                             "pattern": "^(([a-z|A-Z]{1}\\d{7}[a-z|A-Z]{1})|(\\d{8}[a-z|A-Z]{1})|([a-z|A-Z]{1}\\d{8}))$",
-                            "description": "IFZ - NIF"
+                            "description": "IFZ: 9 zifrako edo letrako segida - NIF: Secuencia de 9 d\u00edgitos o letras"
                         },
                         "name": {
                             "type": "string",
@@ -115,6 +115,7 @@
                         },
                         "invoiceNumber": {
                             "type": "string",
+                            "minLength": 1,
                             "maxLength": 20,
                             "description": "Fakturaren zenbakia - N\u00famero factura"
                         },
@@ -204,7 +205,7 @@
                                         "pattern": "^\\d{2,2}-\\d{2,2}-\\d{4,4}$",
                                         "description": "Zuzendutako edo ordezkatutako faktura egin den data (adib: 21-12-2020) - Fecha de expedici\u00f3n de la factura rectificada o sustituida (ej: 21-12-2020)"
                                     },
-                                    "serie": {
+                                    "series": {
                                         "type": "string",
                                         "maxLength": 20,
                                         "description": "Zuzendutako edo ordezkatutako faktura identifikatzen duen serie zenbakia - N\u00famero de serie que identifica a la factura rectificada o sustituida"
@@ -223,8 +224,16 @@
                 "data": {
                     "type": "object",
                     "properties": {
+                        "operationDate": {
+                            "type": "string",
+                            "minLength": 10,
+                            "maxLength": 10,
+                            "pattern": "^\\d{2,2}-\\d{2,2}-\\d{4,4}$",
+                            "description": "Faktura bidali den data (adib: 21-12-2020) - Fecha de operaci\u00f3n de factura (ej: 21-12-2020)"
+                        },
                         "description": {
                             "type": "string",
+                            "minLength": 1,
                             "maxLength": 250
                         },
                         "details": {
@@ -234,6 +243,7 @@
                                 "properties": {
                                     "description": {
                                         "type": "string",
+                                        "minLength": 1,
                                         "maxLength": 250
                                     },
                                     "unitPrice": {
@@ -292,11 +302,13 @@
                                     "13",
                                     "14",
                                     "15",
+                                    "17",
+                                    "19",
                                     "51",
                                     "52",
                                     "53"
                                 ],
-                                "description": "\n * 01: Erregimen orokorreko eragiketa eta hurrengo balioetan jaso gabe dagoen beste edozein kasu - Operaci\u00f3n de r\u00e9gimen general y cualquier otro supuesto que no est\u00e9 recogido en los siguientes valores\n * 02: Esportazioa - Exportaci\u00f3n\n * 03: Erabilitako ondasunen, arte objektuen, zaharkinen eta bilduma objektuen araudi berezia aplikatzen zaien eragiketak - Operaciones a las que se aplique el r\u00e9gimen especial de bienes usados, objetos de arte, antig\u00fcedades y objetos de colecci\u00f3n\n * 04: Inbertsio urrearen araubide berezia - R\u00e9gimen especial del oro de inversi\u00f3n\n * 05: Bidaia-agentzien araubide berezia - R\u00e9gimen especial de las agencias de viajes\n * 06: BEZeko erakundeen multzoaren araudi berezia (maila aurreratua) - R\u00e9gimen especial grupo de entidades en IVA (Nivel Avanzado)\n * 07: Kutxa-irizpidearen araubide berezia - R\u00e9gimen especial del criterio de caja\n * 08: Ekoizpen, Zerbitzu eta Inportazioaren gaineko Zergari \/ Kanarietako Zeharkako Zerga Orokorrari lotutako eragiketak - Operaciones sujetas al IPSI\/IGIC (Impuesto sobre la Producci\u00f3n, los Servicios y la Importaci\u00f3n \/ Impuesto General Indirecto Canario)\n * 09: Besteren izenean eta kontura ari diren bidai agentziek egindako zerbitzuen fakturazioa(Fakturazio Araudiko 3. xedapen gehigarria) - Facturaci\u00f3n de las prestaciones de servicios de agencias de viaje que act\u00faan como mediadoras en nombre y por cuenta ajena (disposici\u00f3n adicional 3\u00aa del Reglamento de Facturaci\u00f3n)\n * 10: Hirugarrenen kontura kobratzea ordainsari profesionalak edo jabetza industrialetik eratorritako eskubideak, egilearenak edo bazkideen, bazkideen edo elkargokideen kontura kobratzeko eginkizun horiek betetzen dituzten sozietate, elkarte, elkargo profesional edo bestelako erakundeek egindakoak - Cobros por cuenta de terceros o terceras de honorarios profesionales o de derechos derivados de la propiedad industrial, de autor u otros por cuenta de sus socios, socias, asociados, asociadas, colegiados o colegiadas efectuados por sociedades, asociaciones, colegios profesionales u otras entidades que realicen estas funciones de cobro\n * 11: Negozio lokala errentatzeko eragiketak, atxikipenari lotuak - Operaciones de arrendamiento de local de negocio sujetos a retenci\u00f3n\n * 12: Negozio lokala errentatzeko eragiketak, atxikipenari lotu gabeak - Operaciones de arrendamiento de local de negocio no sujetos a retenci\u00f3n\n * 13: Negozio lokala errentatzeko eragiketak, atxikipenari lotuak eta lotu gabeak - Operaciones de arrendamiento de local de negocio sujetas y no sujetas a retenci\u00f3n\n * 14: Hartzailea administrazio publiko bat denean ordaintzeke dauden BEZdun fakturak, obra ziurtagirietakoak - Factura con IVA pendiente de devengo en certificaciones de obra cuyo destinatario sea una Administraci\u00f3n P\u00fablica\n * 15: Segidako traktuko eragiketetan ordaintzeke dagoen BEZdun faktura - Factura con IVA pendiente de devengo en operaciones de tracto sucesivo\n * 51: Baliokidetasun errekarguko eragiketak - Operaciones en recargo de equivalencia\n * 52: Erregimen erraztuko eragiketak - Operaciones en r\u00e9gimen simplificado\n * 53: BEZaren ondorioetarako enpresari edo profesionaltzat jotzen ez diren pertsona edo erakundeek egindako eragiketak - Operaciones realizadas por personas o entidades que no tengan la consideraci\u00f3n de empresarios, empresarias o profesionales a efectos del IVA\n                        "
+                                "description": "\n * 01: Erregimen orokorreko eragiketa eta hurrengo balioetan jaso gabe dagoen beste edozein kasu - Operaci\u00f3n de r\u00e9gimen general y cualquier otro supuesto que no est\u00e9 recogido en los siguientes valores\n * 02: Esportazioa - Exportaci\u00f3n\n * 03: Erabilitako ondasunen, arte objektuen, zaharkinen eta bilduma objektuen araudi berezia aplikatzen zaien eragiketak - Operaciones a las que se aplique el r\u00e9gimen especial de bienes usados, objetos de arte, antig\u00fcedades y objetos de colecci\u00f3n\n * 04: Inbertsio urrearen araubide berezia - R\u00e9gimen especial del oro de inversi\u00f3n\n * 05: Bidaia-agentzien araubide berezia - R\u00e9gimen especial de las agencias de viajes\n * 06: BEZeko erakundeen multzoaren araudi berezia (maila aurreratua) - R\u00e9gimen especial grupo de entidades en IVA (Nivel Avanzado)\n * 07: Kutxa-irizpidearen araubide berezia - R\u00e9gimen especial del criterio de caja\n * 08: Ekoizpen, Zerbitzu eta Inportazioaren gaineko Zergari \/ Kanarietako Zeharkako Zerga Orokorrari lotutako eragiketak - Operaciones sujetas al IPSI\/IGIC (Impuesto sobre la Producci\u00f3n, los Servicios y la Importaci\u00f3n \/ Impuesto General Indirecto Canario)\n * 09: Besteren izenean eta kontura ari diren bidai agentziek egindako zerbitzuen fakturazioa(Fakturazio Araudiko 3. xedapen gehigarria) - Facturaci\u00f3n de las prestaciones de servicios de agencias de viaje que act\u00faan como mediadoras en nombre y por cuenta ajena (disposici\u00f3n adicional 3\u00aa del Reglamento de Facturaci\u00f3n)\n * 10: Hirugarrenen kontura kobratzea ordainsari profesionalak edo jabetza industrialetik eratorritako eskubideak, egilearenak edo bazkideen, bazkideen edo elkargokideen kontura kobratzeko eginkizun horiek betetzen dituzten sozietate, elkarte, elkargo profesional edo bestelako erakundeek egindakoak - Cobros por cuenta de terceros o terceras de honorarios profesionales o de derechos derivados de la propiedad industrial, de autor u otros por cuenta de sus socios, socias, asociados, asociadas, colegiados o colegiadas efectuados por sociedades, asociaciones, colegios profesionales u otras entidades que realicen estas funciones de cobro\n * 11: Negozio lokala errentatzeko eragiketak, atxikipenari lotuak - Operaciones de arrendamiento de local de negocio sujetos a retenci\u00f3n\n * 12: Negozio lokala errentatzeko eragiketak, atxikipenari lotu gabeak - Operaciones de arrendamiento de local de negocio no sujetos a retenci\u00f3n\n * 13: Negozio lokala errentatzeko eragiketak, atxikipenari lotuak eta lotu gabeak - Operaciones de arrendamiento de local de negocio sujetas y no sujetas a retenci\u00f3n\n * 14: Hartzailea administrazio publiko bat denean ordaintzeke dauden BEZdun fakturak, obra ziurtagirietakoak - Factura con IVA pendiente de devengo en certificaciones de obra cuyo destinatario sea una Administraci\u00f3n P\u00fablica\n * 15: Segidako traktuko eragiketetan ordaintzeke dagoen BEZdun faktura - Factura con IVA pendiente de devengo en operaciones de tracto sucesivo\n * 17: IX. tituluko XI. kapituluan aurreikusitako araubideren bati atxikitako eragiketa (OSS eta IOSS) - Operaci\u00f3n acogida a alguno de los reg\u00edmenes previstos en el Cap\u00edtulo XI del T\u00edtulo IX (OSS e IOSS).\n * 19: Nekazaritza, abeltzaintza eta arrantzaren araubide berezian dauden jardueren eragiketak (NAAAB) - Operaciones de actividades incluidas en el R\u00e9gimen Especial de Agricultura, Ganader\u00eda y Pesca (REAGYP)\n * 51: Baliokidetasun errekarguko eragiketak - Operaciones en recargo de equivalencia\n * 52: Erregimen erraztuko eragiketak - Operaciones en r\u00e9gimen simplificado\n * 53: BEZaren ondorioetarako enpresari edo profesionaltzat jotzen ez diren pertsona edo erakundeek egindako eragiketak - Operaciones realizadas por personas o entidades que no tengan la consideraci\u00f3n de empresarios, empresarias o profesionales a efectos del IVA\n                        "
                             },
                             "minItems": 1,
                             "maxItems": 3,
@@ -362,7 +374,7 @@
                                         "type": "array",
                                         "description": "Zenbatekoak - Importes",
                                         "minItems": 1,
-                                        "maxItems": 6,
+                                        "maxItems": 12,
                                         "items": {
                                             "type": "object",
                                             "properties": {
@@ -403,7 +415,7 @@
                                             "S1",
                                             "S2"
                                         ],
-                                        "description": "\nSalbuetsi gabeko mota - Tipo de no exenta\n  * S1: sub. pas. inbertsiorik ez - sin ISP\n  * S2: sub. pas. inbertsioa - con ISP\n"
+                                        "description": "\nSalbuetsi gabeko mota - Tipo de no exenta\n  * S1: sub. pas. inbertsiorik ez - sin Inversi\u00f3n de Sujeto Pasivo (ISP)\n  * S2: sub. pas. inbertsioa - con Inversi\u00f3n de Sujeto Pasivo (ISP)\n"
                                     }
                                 },
                                 "required": [
@@ -415,7 +427,7 @@
                         },
                         "nationalNotSubjectBreakdownItems": {
                             "type": "array",
-                            "maxItems": 7,
+                            "maxItems": 4,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -427,9 +439,11 @@
                                         "type": "string",
                                         "enum": [
                                             "RL",
-                                            "OT"
+                                            "OT",
+                                            "VT",
+                                            "IE"
                                         ],
-                                        "description": "\nKargapean ez egoteko arrazoia - Causa no sujeci\u00f3n:\n  * RL: Kargapean ez kokapen arauak direla eta - No sujeto por reglas de localizaci\u00f3n\n  * OT: Kargapean ez 7., 14. art, Beste batzuk - No sujeto art. 7, 14, Otros\n"
+                                        "description": "\nKargapean ez egoteko arrazoia - Causa no sujeci\u00f3n:\n  * RL: Kargapean ez kokapen arauak direla eta - No sujeto por reglas de localizaci\u00f3n\n  * OT: Kargapean ez 7., 14. art, Beste batzuk - No sujeto art. 7, 14, Otros\n  * VT: Ez subjektua, hirugarrenen kontura egindako salmentak (BEZaren eta PFEZaren ondorioetarako konputagarria ez den zenbatekoa) - No sujeto, ventas realizadas por cuenta de terceros (importe no computable a efectos de IVA ni de IRPF)\n  * IE: Lokalizazio-arauak direla-eta ZALen subjektua ez dena, baina atzerriko zerga, IPS\/IGIC edo EBko beste estatu kide bateko BEZa eragiten duena - No sujeto en el TAI por reglas de localizaci\u00f3n, pero repercute impuesto extranjero, IPS\/IGIC o IVA de otro estado miembro UE\n"
                                     }
                                 },
                                 "required": [
@@ -479,7 +493,7 @@
                                         "type": "array",
                                         "description": "Zenbatekoak - Importes",
                                         "minItems": 1,
-                                        "maxItems": 6,
+                                        "maxItems": 12,
                                         "items": {
                                             "type": "object",
                                             "properties": {
@@ -520,7 +534,7 @@
                                             "S1",
                                             "S2"
                                         ],
-                                        "description": "\nSalbuetsi gabeko mota - Tipo de no exenta\n  * S1: sub. pas. inbertsiorik ez - sin ISP\n  * S2: sub. pas. inbertsioa - con ISP\n"
+                                        "description": "\nSalbuetsi gabeko mota - Tipo de no exenta\n  * S1: sub. pas. inbertsiorik ez - sin Inversi\u00f3n de Sujeto Pasivo (ISP)\n  * S2: sub. pas. inbertsioa - con Inversi\u00f3n de Sujeto Pasivo (ISP)\n"
                                     }
                                 },
                                 "required": [
@@ -532,7 +546,7 @@
                         },
                         "foreignServiceNotSubjectBreakdownItems": {
                             "type": "array",
-                            "maxItems": 7,
+                            "maxItems": 4,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -544,9 +558,11 @@
                                         "type": "string",
                                         "enum": [
                                             "RL",
-                                            "OT"
+                                            "OT",
+                                            "VT",
+                                            "IE"
                                         ],
-                                        "description": "\nKargapean ez egoteko arrazoia - Causa no sujeci\u00f3n:\n  * RL: Kargapean ez kokapen arauak direla eta - No sujeto por reglas de localizaci\u00f3n\n  * OT: Kargapean ez 7., 14. art, Beste batzuk - No sujeto art. 7, 14, Otros\n"
+                                        "description": "\nKargapean ez egoteko arrazoia - Causa no sujeci\u00f3n:\n  * RL: Kargapean ez kokapen arauak direla eta - No sujeto por reglas de localizaci\u00f3n\n  * OT: Kargapean ez 7., 14. art, Beste batzuk - No sujeto art. 7, 14, Otros\n  * VT: Ez subjektua, hirugarrenen kontura egindako salmentak (BEZaren eta PFEZaren ondorioetarako konputagarria ez den zenbatekoa) - No sujeto, ventas realizadas por cuenta de terceros (importe no computable a efectos de IVA ni de IRPF)\n  * IE: Lokalizazio-arauak direla-eta ZALen subjektua ez dena, baina atzerriko zerga, IPS\/IGIC edo EBko beste estatu kide bateko BEZa eragiten duena - No sujeto en el TAI por reglas de localizaci\u00f3n, pero repercute impuesto extranjero, IPS\/IGIC o IVA de otro estado miembro UE\n"
                                     }
                                 },
                                 "required": [
@@ -596,7 +612,7 @@
                                         "type": "array",
                                         "description": "Zenbatekoak - Importes",
                                         "minItems": 1,
-                                        "maxItems": 6,
+                                        "maxItems": 12,
                                         "items": {
                                             "type": "object",
                                             "properties": {
@@ -637,7 +653,7 @@
                                             "S1",
                                             "S2"
                                         ],
-                                        "description": "\nSalbuetsi gabeko mota - Tipo de no exenta\n  * S1: sub. pas. inbertsiorik ez - sin ISP\n  * S2: sub. pas. inbertsioa - con ISP\n"
+                                        "description": "\nSalbuetsi gabeko mota - Tipo de no exenta\n  * S1: sub. pas. inbertsiorik ez - sin Inversi\u00f3n de Sujeto Pasivo (ISP)\n  * S2: sub. pas. inbertsioa - con Inversi\u00f3n de Sujeto Pasivo (ISP)\n"
                                     }
                                 },
                                 "required": [
@@ -649,7 +665,7 @@
                         },
                         "foreignDeliveryNotSubjectBreakdownItems": {
                             "type": "array",
-                            "maxItems": 7,
+                            "maxItems": 4,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -661,9 +677,11 @@
                                         "type": "string",
                                         "enum": [
                                             "RL",
-                                            "OT"
+                                            "OT",
+                                            "VT",
+                                            "IE"
                                         ],
-                                        "description": "\nKargapean ez egoteko arrazoia - Causa no sujeci\u00f3n:\n  * RL: Kargapean ez kokapen arauak direla eta - No sujeto por reglas de localizaci\u00f3n\n  * OT: Kargapean ez 7., 14. art, Beste batzuk - No sujeto art. 7, 14, Otros\n"
+                                        "description": "\nKargapean ez egoteko arrazoia - Causa no sujeci\u00f3n:\n  * RL: Kargapean ez kokapen arauak direla eta - No sujeto por reglas de localizaci\u00f3n\n  * OT: Kargapean ez 7., 14. art, Beste batzuk - No sujeto art. 7, 14, Otros\n  * VT: Ez subjektua, hirugarrenen kontura egindako salmentak (BEZaren eta PFEZaren ondorioetarako konputagarria ez den zenbatekoa) - No sujeto, ventas realizadas por cuenta de terceros (importe no computable a efectos de IVA ni de IRPF)\n  * IE: Lokalizazio-arauak direla-eta ZALen subjektua ez dena, baina atzerriko zerga, IPS\/IGIC edo EBko beste estatu kide bateko BEZa eragiten duena - No sujeto en el TAI por reglas de localizaci\u00f3n, pero repercute impuesto extranjero, IPS\/IGIC o IVA de otro estado miembro UE\n"
                                     }
                                 },
                                 "required": [
@@ -690,6 +708,7 @@
                     "properties": {
                         "invoiceNumber": {
                             "type": "string",
+                            "minLength": 1,
                             "maxLength": 20,
                             "description": "Aurreko fakturaren zenbakia - N\u00famero factura factura anterior"
                         },
@@ -700,10 +719,11 @@
                         },
                         "signature": {
                             "type": "string",
+                            "minLength": 1,
                             "maxLength": 100,
                             "description": "Aurreko fakturaren TBAI fitxategiko SignatureValue eremuko lehen ehun karaktereak - Primeros cien caracteres del campo SignatureValue del fichero TBAI de la factura anterior"
                         },
-                        "serie": {
+                        "series": {
                             "type": "string",
                             "maxLength": 20,
                             "description": "Aurreko fakturaren seriea - Serie factura anterior"

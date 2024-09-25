@@ -17,18 +17,10 @@ use Barnetik\Tbai\ValueObject\Amount;
 use Barnetik\Tbai\ValueObject\Date;
 use Barnetik\Tbai\ValueObject\Time;
 use DOMDocument;
-use PHPUnit\Framework\TestCase;
-use Test\Barnetik\Tbai\Mother\TicketBaiMother;
+use Test\Barnetik\TestCase;
 
-class RectificationTicketBaiTest extends TestCase
+class TicketBaiRectificationTest extends TestCase
 {
-    private TicketBaiMother $ticketBaiMother;
-
-    protected function setUp(): void
-    {
-        $this->ticketBaiMother = new TicketBaiMother;
-    }
-
     public function test_TicketBai_rectification_validates_schema(): void
     {
         $certFile = $_ENV['TBAI_GIPUZKOA_P12_PATH'];
@@ -51,7 +43,33 @@ class RectificationTicketBaiTest extends TestCase
 
         $signedDom = new DOMDocument();
         $signedDom->load($signedFilename);
-        $this->assertTrue($signedDom->schemaValidate(__DIR__ . '/__files/specs/ticketBaiV1-2.xsd'));
+        $this->assertTrue($signedDom->schemaValidate(__DIR__ . '/__files/specs/ticketbaiv1-2-2.xsd'));
+    }
+
+    public function test_TicketBai_rectification_from_json_validates_schema(): void
+    {
+        $certFile = $_ENV['TBAI_GIPUZKOA_P12_PATH'];
+        $certPassword = $_ENV['TBAI_GIPUZKOA_PRIVATE_KEY'];
+        $privateKey = PrivateKey::p12($certFile);
+
+        $ticketbai = $this->ticketBaiMother->createGipuzkoaTicketBai();
+        $signedFilename = tempnam(__DIR__ . '/__files/signedXmls', 'signed-');
+        rename($signedFilename, $signedFilename . '.xml');
+        $signedFilename = $signedFilename . '.xml';
+
+        $ticketbai->sign($privateKey, $certPassword, $signedFilename);
+
+        $ticketbaiRectification = $this->ticketBaiMother->createGipuzkoaTicketBaiFromJson(__DIR__ . '/__files/tbai-rectification-sample.json');
+        $signedFilename = tempnam(__DIR__ . '/__files/signedXmls', 'signed-');
+        rename($signedFilename, $signedFilename . '.xml');
+        $signedFilename = $signedFilename . '.xml';
+
+        $ticketbaiRectification->sign($privateKey, $certPassword, $signedFilename);
+        // echo json_encode($ticketbaiRectification->toArray(), JSON_PRETTY_PRINT);
+        // exit();
+        $signedDom = new DOMDocument();
+        $signedDom->load($signedFilename);
+        $this->assertTrue($signedDom->schemaValidate(__DIR__ . '/__files/specs/ticketbaiv1-2-2.xsd'));
     }
 
 
@@ -113,6 +131,6 @@ class RectificationTicketBaiTest extends TestCase
 
         $signedDom = new DOMDocument();
         $signedDom->load($signedFilename);
-        $this->assertTrue($signedDom->schemaValidate(__DIR__ . '/__files/specs/ticketBaiV1-2.xsd'));
+        $this->assertTrue($signedDom->schemaValidate(__DIR__ . '/__files/specs/ticketbaiv1-2-2.xsd'));
     }
 }

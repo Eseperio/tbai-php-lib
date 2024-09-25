@@ -5,18 +5,10 @@ namespace Test\Barnetik\Tbai;
 use Barnetik\Tbai\PrivateKey;
 use Barnetik\Tbai\TicketBaiCancel;
 use DOMDocument;
-use PHPUnit\Framework\TestCase;
-use Test\Barnetik\Tbai\Mother\TicketBaiMother;
+use Test\Barnetik\TestCase;
 
 class TicketBaiCancelTest extends TestCase
 {
-    private TicketBaiMother $ticketBaiMother;
-
-    protected function setUp(): void
-    {
-        $this->ticketBaiMother = new TicketBaiMother;
-    }
-
     public function test_TicketBaiCancel_can_be_generated_from_xml(): void
     {
         $certFile = $_ENV['TBAI_ARABA_P12_PATH'];
@@ -41,7 +33,7 @@ class TicketBaiCancelTest extends TestCase
         $signedDom = new DOMDocument();
         $signedDom->loadXML($ticketbaiFromXml->signed());
 
-        $this->assertTrue($signedDom->schemaValidate(__DIR__ . '/__files/specs/Anula_ticketBaiV1-2.xsd'));
+        $this->assertTrue($signedDom->schemaValidate(__DIR__ . '/__files/specs/anula_ticketbaiv1-2-2.xsd'));
     }
 
     public function test_TicketBaiCancel_data_can_be_serialized(): void
@@ -62,6 +54,6 @@ class TicketBaiCancelTest extends TestCase
         $ticketbai->sign($privateKey, $_ENV['TBAI_ARABA_PRIVATE_KEY'], $filename);
         $signedDom = new DOMDocument();
         $signedDom->load($filename);
-        $this->assertTrue($signedDom->schemaValidate(__DIR__ . '/__files/specs/Anula_ticketBaiV1-2.xsd'));
+        $this->assertTrue($signedDom->schemaValidate(__DIR__ . '/__files/specs/anula_ticketbaiv1-2-2.xsd'));
     }
 }

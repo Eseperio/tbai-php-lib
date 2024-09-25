@@ -70,7 +70,10 @@ abstract class AbstractTicketBai implements TbaiXml, TbaiSignable, Stringable, J
                 );
             } else {
                 $certData['cert'] = file_get_contents($privateKey->certPath());
-                $certData['pkey'] = file_get_contents($privateKey->keyPath());
+                $certData['pkey'] = openssl_get_privatekey(
+                    file_get_contents($privateKey->keyPath()),
+                    $password
+                );
             }
 
             $xadesClass = $this->getXadesClassForTerritory();
@@ -149,6 +152,11 @@ abstract class AbstractTicketBai implements TbaiXml, TbaiSignable, Stringable, J
         $namespaces = $simpleXml->getNamespaces(true);
         $ds = $simpleXml->children($namespaces['ds']);
         return (string)$ds->Signature->SignatureValue;
+    }
+
+    public function chainSignatureValue(): string
+    {
+        return substr($this->signatureValue(), 0, 100);
     }
 
     public function shortSignatureValue(): string

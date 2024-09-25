@@ -2,25 +2,18 @@
 
 namespace Test\Barnetik\Tbai\Api\Gipuzkoa;
 
+use Barnetik\Tbai\Api;
 use Barnetik\Tbai\Api\AbstractTerritory;
 use Barnetik\Tbai\Api\Gipuzkoa\Endpoint;
 use Barnetik\Tbai\PrivateKey;
 use Barnetik\Tbai\TicketBai;
-use PHPUnit\Framework\TestCase;
-use Test\Barnetik\Tbai\Mother\TicketBaiMother;
+use Test\Barnetik\TestCase;
 
 class EndpointTest extends TestCase
 {
     const SUBMIT_RETRIES = 3;
     const SUBMIT_RETRY_DELAY = 3;
     const DEFAULT_TERRITORY = TicketBai::TERRITORY_GIPUZKOA;
-
-    private TicketBaiMother $ticketBaiMother;
-
-    protected function setUp(): void
-    {
-        $this->ticketBaiMother = new TicketBaiMother;
-    }
 
     public function test_TicketBai_is_delivered(): void
     {
@@ -54,6 +47,114 @@ class EndpointTest extends TestCase
         }
 
         $this->assertTrue($response->isDelivered());
+    }
+
+    public function test_TicketBai_is_delivered_for_intracomunitary_with_vat(): void
+    {
+        $certFile = $_ENV['TBAI_GIPUZKOA_P12_PATH'];
+        $certPassword = $_ENV['TBAI_GIPUZKOA_PRIVATE_KEY'];
+        $privateKey = PrivateKey::p12($certFile);
+
+        $signedFilename = tempnam(__DIR__ . '/../../__files/signedXmls', 'signed-');
+        rename($signedFilename, $signedFilename . '.xml');
+        $signedFilename = $signedFilename . '.xml';
+
+        $ticketbai = $this->ticketBaiMother->createGipuzkoaTicketBaiFromJson(
+            __DIR__ . '/../../__files/tbai-intracomunitary-eu-vat-id-recipient.json'
+        );
+        $ticketbai->sign($privateKey, $certPassword, $signedFilename);
+
+        $endpoint = new Api(TicketBai::TERRITORY_GIPUZKOA, true, true);
+
+        $response = $endpoint->submitInvoice($ticketbai, $privateKey, $certPassword, self::SUBMIT_RETRIES, self::SUBMIT_RETRY_DELAY);
+
+        $responseFile = tempnam(__DIR__ . '/../../__files/responses', 'response-');
+        file_put_contents($responseFile, $response->content());
+
+        if (!$response->isCorrect()) {
+            echo "\n";
+            echo "VatId / IFZ / NIF: " . $_ENV['TBAI_GIPUZKOA_ISSUER_NIF'] . "\n";
+            echo "Date:" . date('Y-m-d H:i:s') . "\n";
+            echo "IP: " . file_get_contents('https://ipecho.net/plain') . "\n";
+            echo "Sent file: " . $endpoint->debugData(AbstractTerritory::DEBUG_SENT_FILE) . "\n";
+            echo "Signed file: " . basename($signedFilename) . "\n";
+            echo "Main error message: " . $response->mainErrorMessage() . "\n";
+            echo "Response file: " . basename($responseFile) . "\n";
+        }
+
+        $this->assertTrue($response->isCorrect());
+    }
+
+    public function test_TicketBai_is_delivered_for_exports(): void
+    {
+        $certFile = $_ENV['TBAI_GIPUZKOA_P12_PATH'];
+        $certPassword = $_ENV['TBAI_GIPUZKOA_PRIVATE_KEY'];
+        $privateKey = PrivateKey::p12($certFile);
+
+        $signedFilename = tempnam(__DIR__ . '/../../__files/signedXmls', 'signed-');
+        rename($signedFilename, $signedFilename . '.xml');
+        $signedFilename = $signedFilename . '.xml';
+
+        $ticketbai = $this->ticketBaiMother->createGipuzkoaTicketBaiFromJson(
+            __DIR__ . '/../../__files/tbai-export.json'
+        );
+        $ticketbai->sign($privateKey, $certPassword, $signedFilename);
+
+        $endpoint = new Api(TicketBai::TERRITORY_GIPUZKOA, true, true);
+
+        $response = $endpoint->submitInvoice($ticketbai, $privateKey, $certPassword, self::SUBMIT_RETRIES, self::SUBMIT_RETRY_DELAY);
+
+        $responseFile = tempnam(__DIR__ . '/../../__files/responses', 'response-');
+        file_put_contents($responseFile, $response->content());
+
+        if (!$response->isCorrect()) {
+            echo "\n";
+            echo "VatId / IFZ / NIF: " . $_ENV['TBAI_GIPUZKOA_ISSUER_NIF'] . "\n";
+            echo "Date:" . date('Y-m-d H:i:s') . "\n";
+            echo "IP: " . file_get_contents('https://ipecho.net/plain') . "\n";
+            echo "Sent file: " . $endpoint->debugData(AbstractTerritory::DEBUG_SENT_FILE) . "\n";
+            echo "Signed file: " . basename($signedFilename) . "\n";
+            echo "Main error message: " . $response->mainErrorMessage() . "\n";
+            echo "Response file: " . basename($responseFile) . "\n";
+        }
+
+        $this->assertTrue($response->isCorrect());
+    }
+
+    public function test_TicketBai_is_delivered_for_ISP(): void
+    {
+        $certFile = $_ENV['TBAI_GIPUZKOA_P12_PATH'];
+        $certPassword = $_ENV['TBAI_GIPUZKOA_PRIVATE_KEY'];
+        $privateKey = PrivateKey::p12($certFile);
+
+        $signedFilename = tempnam(__DIR__ . '/../../__files/signedXmls', 'signed-');
+        rename($signedFilename, $signedFilename . '.xml');
+        $signedFilename = $signedFilename . '.xml';
+
+        $ticketbai = $this->ticketBaiMother->createGipuzkoaTicketBaiFromJson(
+            __DIR__ . '/../../__files/tbai-sample-isp.json'
+        );
+        $ticketbai->sign($privateKey, $certPassword, $signedFilename);
+
+        $endpoint = new Api(TicketBai::TERRITORY_GIPUZKOA, true, true);
+
+        $response = $endpoint->submitInvoice($ticketbai, $privateKey, $certPassword, self::SUBMIT_RETRIES, self::SUBMIT_RETRY_DELAY);
+
+        $responseFile = tempnam(__DIR__ . '/../../__files/responses', 'response-');
+        file_put_contents($responseFile, $response->content());
+
+        if (!$response->isCorrect()) {
+            echo "\n";
+            echo "VatId / IFZ / NIF: " . $_ENV['TBAI_GIPUZKOA_ISSUER_NIF'] . "\n";
+            echo "Date:" . date('Y-m-d H:i:s') . "\n";
+            echo "IP: " . file_get_contents('https://ipecho.net/plain') . "\n";
+            echo "Sent file: " . $endpoint->debugData(AbstractTerritory::DEBUG_SENT_FILE) . "\n";
+            echo "Signed file: " . basename($signedFilename) . "\n";
+            echo "Main error message: " . $response->mainErrorMessage() . "\n";
+            echo "Response file: " . basename($responseFile) . "\n";
+        }
+
+        $this->assertTrue($response->isCorrect());
     }
 
     public function test_TicketBai_multiVat_is_delivered(): void
@@ -184,7 +285,7 @@ class EndpointTest extends TestCase
         $certPassword = $_ENV['TBAI_GIPUZKOA_PRIVATE_KEY'];
         $privateKey = PrivateKey::p12($certFile);
 
-        $json = file_get_contents(__DIR__ . '/../../__files/tbai-sample.json');
+        $json = $this->getFilesContents('tbai-sample.json');
         $jsonArray = json_decode($json, true);
         $jsonArray['invoice']['header']['invoiceNumber'] = time();
         sleep(1);
@@ -223,7 +324,7 @@ class EndpointTest extends TestCase
         $certPassword = $_ENV['TBAI_GIPUZKOA_PRIVATE_KEY'];
         $privateKey = PrivateKey::p12($certFile);
 
-        $json = file_get_contents(__DIR__ . '/../../__files/tbai-sample-with-multiple-same-vat.json');
+        $json = $this->getFilesContents('tbai-sample-with-multiple-same-vat.json');
         $jsonArray = json_decode($json, true);
         $jsonArray['invoice']['header']['invoiceNumber'] = time();
         sleep(1);
@@ -262,7 +363,7 @@ class EndpointTest extends TestCase
         $certPassword = $_ENV['TBAI_GIPUZKOA_PRIVATE_KEY'];
         $privateKey = PrivateKey::p12($certFile);
 
-        $json = file_get_contents(__DIR__ . '/../../__files/tbai-sample-regimen-51.json');
+        $json = $this->getFilesContents('tbai-sample-regimen-51.json');
         $jsonArray = json_decode($json, true);
         $jsonArray['invoice']['header']['invoiceNumber'] = time();
         sleep(1);
@@ -301,7 +402,7 @@ class EndpointTest extends TestCase
         $certPassword = $_ENV['TBAI_GIPUZKOA_PRIVATE_KEY'];
         $privateKey = PrivateKey::p12($certFile);
 
-        $json = file_get_contents(__DIR__ . '/../../__files/tbai-sample-regimen-51-with-equivalence.json');
+        $json = $this->getFilesContents('tbai-sample-regimen-51-with-equivalence.json');
         $jsonArray = json_decode($json, true);
         $jsonArray['invoice']['header']['invoiceNumber'] = time();
         sleep(1);
@@ -590,4 +691,39 @@ class EndpointTest extends TestCase
         $this->assertFalse($response->isDelivered());
         $this->assertFalse($response->isCorrect());
     }
+
+    public function test_TicketBai_response_headers_can_be_retrieved(): void
+    {
+        $certFile = $_ENV['TBAI_GIPUZKOA_P12_PATH'];
+        $certPassword = $_ENV['TBAI_GIPUZKOA_PRIVATE_KEY'];
+        $privateKey = PrivateKey::p12($certFile);
+
+        $ticketbai = $this->ticketBaiMother->createGipuzkoaTicketBai();
+        $signedFilename = tempnam(__DIR__ . '/../../__files/signedXmls', 'signed-');
+        rename($signedFilename, $signedFilename . '.xml');
+        $signedFilename = $signedFilename . '.xml';
+
+        $ticketbai->sign($privateKey, $certPassword, $signedFilename);
+
+        $endpoint = new Endpoint(true, true);
+
+        $response = $endpoint->submitInvoice($ticketbai, $privateKey, $certPassword, self::SUBMIT_RETRIES, self::SUBMIT_RETRY_DELAY);
+
+        $responseFile = tempnam(__DIR__ . '/../../__files/responses', 'response-');
+        file_put_contents($responseFile, $response->content());
+
+        if (!$response->isCorrect()) {
+            echo "\n";
+            echo "VatId / IFZ / NIF: " . $_ENV['TBAI_GIPUZKOA_ISSUER_NIF'] . "\n";
+            echo "Date:" . date('Y-m-d H:i:s') . "\n";
+            echo "IP: " . file_get_contents('https://ipecho.net/plain') . "\n";
+            echo "Sent file: " . $endpoint->debugData(AbstractTerritory::DEBUG_SENT_FILE) . "\n";
+            echo "Signed file: " . basename($signedFilename) . "\n";
+            echo "Main error message: " . $response->mainErrorMessage() . "\n";
+            echo "Response file: " . basename($responseFile) . "\n";
+        }
+
+        $this->assertIsArray($response->headers());
+    }
+
 }

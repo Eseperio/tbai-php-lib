@@ -70,7 +70,7 @@ abstract class AbstractTerritory implements EndpointInterface
         return $this->doRequest($cancelZuzenduRequest, $privateKey, $password, $maxRetries, $retryDelay);
     }
 
-    private function doRequest(ApiRequestInterface $request, PrivateKey $privateKey, string $password, int $maxRetries, int $retryDelay): ?ResponseInterface
+    protected function doRequest(ApiRequestInterface $request, PrivateKey $privateKey, string $password, int $maxRetries, int $retryDelay): ?ResponseInterface
     {
         $tries = 0;
         do {
@@ -80,6 +80,10 @@ abstract class AbstractTerritory implements EndpointInterface
                 curl_setopt_array($curl, $this->getOptArray($request, $privateKey, $password));
 
                 $response = curl_exec($curl);
+                if (curl_errno($curl)) {
+                    throw new Exception(sprintf('Curl error(%s): %s', curl_errno($curl), curl_error($curl)));
+                }
+
                 list($status, $headers, $content) = $this->parseCurlResponse($response, $curl);
                 curl_close($curl);
                 return $this->response($status, $headers, $content);
@@ -90,6 +94,7 @@ abstract class AbstractTerritory implements EndpointInterface
             }
             sleep($retryDelay);
         } while ($tries <= $maxRetries);
+
         return null;
     }
 
@@ -154,6 +159,7 @@ abstract class AbstractTerritory implements EndpointInterface
         } else {
             unlink($dataFile);
         }
+
         return $data;
     }
 

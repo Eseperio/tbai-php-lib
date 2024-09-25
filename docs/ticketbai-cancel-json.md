@@ -25,7 +25,7 @@
                         "vatId": {
                             "type": "string",
                             "pattern": "^(([a-z|A-Z]{1}\\d{7}[a-z|A-Z]{1})|(\\d{8}[a-z|A-Z]{1})|([a-z|A-Z]{1}\\d{8}))$",
-                            "description": "IFZ - NIF"
+                            "description": "IFZ: 9 zifrako edo letrako segida - NIF: Secuencia de 9 d\u00edgitos o letras"
                         },
                         "name": {
                             "type": "string",
@@ -48,6 +48,7 @@
                         },
                         "invoiceNumber": {
                             "type": "string",
+                            "minLength": 1,
                             "maxLength": 20,
                             "description": "Fakturaren zenbakia - N\u00famero factura"
                         },
@@ -67,41 +68,7 @@
                 "breakdown"
             ]
         },
-        "fingerprint": {
-            "type": "object",
-            "properties": {
-                "previousInvoice": {
-                    "type": "object",
-                    "properties": {
-                        "invoiceNumber": {
-                            "type": "string",
-                            "maxLength": 20,
-                            "description": "Aurreko fakturaren zenbakia - N\u00famero factura factura anterior"
-                        },
-                        "sentDate": {
-                            "type": "string",
-                            "pattern": "^\\d{2,2}-\\d{2,2}-\\d{4,4}$",
-                            "description": "Aurreko faktura bidali zen data (adib: 21-12-2020) - Fecha de expedici\u00f3n de factura anterior (ej: 21-12-2020)"
-                        },
-                        "signature": {
-                            "type": "string",
-                            "maxLength": 100,
-                            "description": "Aurreko fakturaren TBAI fitxategiko SignatureValue eremuko lehen ehun karaktereak - Primeros cien caracteres del campo SignatureValue del fichero TBAI de la factura anterior"
-                        },
-                        "serie": {
-                            "type": "string",
-                            "maxLength": 20,
-                            "description": "Aurreko fakturaren seriea - Serie factura anterior"
-                        }
-                    },
-                    "required": [
-                        "invoiceNumber",
-                        "sentDate",
-                        "signature"
-                    ]
-                }
-            }
-        }
+        "fingerprint": []
     },
     "required": [
         "territory",

@@ -5,18 +5,10 @@ namespace Test\Barnetik\Tbai;
 use Barnetik\Tbai\PrivateKey;
 use Barnetik\Tbai\TicketBai;
 use DOMDocument;
-use PHPUnit\Framework\TestCase;
-use Test\Barnetik\Tbai\Mother\TicketBaiMother;
+use Test\Barnetik\TestCase;
 
 class SimplifiedTicketBaiTest extends TestCase
 {
-    private TicketBaiMother $ticketBaiMother;
-
-    protected function setUp(): void
-    {
-        $this->ticketBaiMother = new TicketBaiMother;
-    }
-
     public function test_simplified_TicketBai_validates_schema(): void
     {
 
@@ -42,7 +34,7 @@ class SimplifiedTicketBaiTest extends TestCase
 
         $signedDom = new DOMDocument();
         $signedDom->load($signedFilename);
-        $this->assertTrue($signedDom->schemaValidate(__DIR__ . '/__files/specs/ticketBaiV1-2.xsd'));
+        $this->assertTrue($signedDom->schemaValidate(__DIR__ . '/__files/specs/ticketbaiv1-2-2.xsd'));
     }
 
     public function test_simplified_TicketBai_without_recipient_validates_schema(): void
@@ -60,7 +52,7 @@ class SimplifiedTicketBaiTest extends TestCase
         $certPassword = $_ENV['TBAI_GIPUZKOA_PRIVATE_KEY'];
         $privateKey = PrivateKey::p12($certFile);
 
-        $ticketbai = $this->ticketBaiMother->createSimplifiedTicketBai($nif, $issuer, $license, $developer, $appName, $appVersion,$territory, true, false);
+        $ticketbai = $this->ticketBaiMother->createSimplifiedTicketBai($nif, $issuer, $license, $developer, $appName, $appVersion, $territory, true, false);
 
         $signedFilename = tempnam(__DIR__ . '/__files/signedXmls', 'signed-');
         rename($signedFilename, $signedFilename . '.xml');
@@ -70,12 +62,12 @@ class SimplifiedTicketBaiTest extends TestCase
 
         $signedDom = new DOMDocument();
         $signedDom->load($signedFilename);
-        $this->assertTrue($signedDom->schemaValidate(__DIR__ . '/__files/specs/ticketBaiV1-2.xsd'));
+        $this->assertTrue($signedDom->schemaValidate(__DIR__ . '/__files/specs/ticketbaiv1-2-2.xsd'));
     }
 
     public function test_ticketbai_simplified_without_recipient_can_be_generated_from_json(): void
     {
-        $json = file_get_contents(__DIR__ . '/__files/tbai-simplified-without-recipient-sample.json');
+        $json = $this->getFilesContents('tbai-simplified-without-recipient-sample.json');
         $ticketbai = TicketBai::createFromJson($this->ticketBaiMother->createArabaVendor(), json_decode($json, true));
         $this->assertEquals(
             TicketBai::class,
@@ -83,6 +75,6 @@ class SimplifiedTicketBaiTest extends TestCase
         );
 
         $dom = $ticketbai->dom();
-        $this->assertTrue($dom->schemaValidate(__DIR__ . '/__files/specs/ticketBaiV1-2-no-signature.xsd'));
+        $this->assertTrue($dom->schemaValidate(__DIR__ . '/__files/specs/ticketbaiv1-2-2-no-signature.xsd'));
     }
 }
